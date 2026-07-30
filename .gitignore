@@ -43,6 +43,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Raw screenshot source (~8MB of full-res PNG/JPG). The processed 16:10 webp
+# versions that the site actually serves live in public/projects/ and are
+# committed. Keep the originals locally in case they need re-cropping.
+/screenshots/
+
 
 
 
