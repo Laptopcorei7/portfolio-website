@@ -60,7 +60,6 @@ export const completeApps: Project[] = [
       "Backend for the Food Ninja app — auth, image uploads, real-time order updates, and SMS and email notifications.",
     tech: ["Express", "MongoDB", "Socket.io"],
     links: [{ kind: "github", href: "https://github.com/Laptopcorei7/food-ninja-server" }],
-    featured: true,
     overview: [
       "The service behind the Food Ninja mobile app. It covers the full order lifecycle — accounts, restaurant and menu data, order placement, and delivery tracking.",
       "Order state is pushed to clients over WebSockets rather than polled, so a customer watching their delivery sees changes the moment they happen. Notifications go out over both SMS and email depending on how urgent the update is.",
@@ -89,7 +88,6 @@ export const completeApps: Project[] = [
       "Full-stack e-commerce platform: browsing, cart, wishlists, orders, reviews and a role-based admin dashboard.",
     tech: ["React", "TypeScript", "Express"],
     links: [{ kind: "github", href: "https://github.com/Laptopcorei7/ecommerce-website" }],
-    featured: true,
     overview: [
       "A complete e-commerce application, front to back. Customers can browse and filter a catalogue, manage a cart and wishlist, check out, track orders and leave reviews.",
       "Behind a separate admin login sits a full operations dashboard: order and product management, sales analytics with revenue broken down by month, customer reports, and inventory alerts for low or out-of-stock items.",
@@ -144,6 +142,10 @@ export const completeApps: Project[] = [
     tech: ["Flutter", "Riverpod"],
     links: [],
     availability: "private",
+    featured: true,
+    /* Three phone screens composited into one 16:10 landscape frame — a single
+       portrait screenshot would crop to a thin band in the card. */
+    image: "/projects/intra-bus-mobile.webp",
     overview: [
       "The conductor-facing companion to Intra Bus Server. Conductors use it to manage their shift and issue tickets on board.",
       "Buses lose signal constantly on intercity routes, so the app is built offline-first: tickets are written to a local Hive store and reconciled with the server once connectivity returns, rather than failing at the point of sale.",
@@ -171,6 +173,8 @@ export const completeApps: Project[] = [
     tech: ["React", "Express", "SQLite"],
     links: [],
     availability: "unpublished",
+    featured: true,
+    image: "/projects/agricycle.webp",
     overview: [
       "A site for AgriCycle Ltd, a Ghanaian social enterprise that turns agricultural waste — plantain trees and their by-products — into organic fertilizer.",
       "The interesting part is the content layer. Almost every piece of copy on the site lives in JSON files that seed into SQLite, so the team can edit hero slides, products, team members, testimonials and news without touching code. Re-seeding is non-destructive: it rebuilds content tables but never drops subscriber or contact-form data.",
@@ -232,7 +236,17 @@ export const smallProjects: Project[] = [
   },
 ];
 
-/** Featured projects shown in the home page `#projects` section. */
+/**
+ * Featured projects shown in the home page `#projects` section.
+ *
+ * Chosen to lead with visuals: Intra Bus Mobile and AgriCycle both have
+ * screenshots, and Intra Bus Server is the API half of the same system as the
+ * mobile app, which mirrors how the bio describes the work. The remaining APIs
+ * are still one click away on /works.
+ *
+ * When Food Ninja gets screenshots, swap it in for Intra Bus Server so all
+ * three home cards carry an image.
+ */
 export const featuredProjects: Project[] = completeApps
   .filter((project) => project.featured)
   .slice(0, 3);
