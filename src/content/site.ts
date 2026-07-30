@@ -84,4 +84,5 @@ export const funFacts: string[] = [
   "My favorite movie is *Ready Player One*",
   "I love *gaming*",
   "My favorite game is *Farming Simulator 25*",
+  "I like to go to the *gym*",
 ];
