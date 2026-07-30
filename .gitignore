@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the template MUST ship: the README tells you to copy it, and it holds
+# only variable names, never values.
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +42,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mcp.json
