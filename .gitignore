@@ -65,3 +65,8 @@ next-env.d.ts
 
 
 .mcp.json
+
+# Added by `vercel link`. It also appended a second `.env*` rule, which was
+# removed: it sat *after* the `!.env.example` negation above and silently
+# re-ignored the template the README tells you to copy.
+.vercel
