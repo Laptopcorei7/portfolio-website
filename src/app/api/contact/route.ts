@@ -21,7 +21,7 @@ function clientKey(request: Request): string {
 export async function POST(request: Request) {
   pruneRateLimits();
 
-  const limit = rateLimit(`contact:${clientKey(request)}`, {
+  const limit = await rateLimit(`contact:${clientKey(request)}`, {
     limit: 5,
     windowMs: 60_000,
   });
