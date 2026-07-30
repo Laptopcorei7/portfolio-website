@@ -1,0 +1,15 @@
+import type { MetadataRoute } from "next";
+import { siteUrl } from "@/content/site";
+
+/** Served at /robots.txt. */
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      // No reason for crawlers to hit the contact endpoint.
+      disallow: "/api/",
+    },
+    sitemap: `${siteUrl}/sitemap.xml`,
+  };
+}
