@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogoMark } from "@/components/ui/icons";
 import { profile } from "@/content/site";
 
@@ -20,12 +20,36 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  /* Now that the menu covers the page instead of pushing it, it needs the
+     usual ways out of a thing that covers the page. Tapping a link already
+     closes it, so this only handles Escape and a tap on the content behind. */
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
+
   return (
-    <header className="relative z-30 py-6">
+    <header ref={headerRef} className="relative z-30 py-6">
       <div className="container-page flex items-center justify-between">
         <Link
           href="/"
@@ -86,13 +110,16 @@ export function Header() {
         </button>
       </div>
 
+      {/* Overlays the page rather than sitting in the flow. As an in-flow block
+          it pushed everything below it down by ~190px the instant it opened,
+          which on a phone reads as the page lurching rather than as a menu. */}
       {open ? (
         <nav
           id="mobile-nav"
           aria-label="Main"
-          className="border-line/30 container-page mt-4 border-t sm:hidden"
+          className="border-line/30 bg-bg absolute inset-x-0 top-full z-30 border-y sm:hidden"
         >
-          <ul className="flex flex-col gap-4 py-4">
+          <ul className="container-page flex flex-col gap-4 py-4">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
