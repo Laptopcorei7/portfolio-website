@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { allProjects, getProjectBySlug } from "@/content/projects";
 import { profile } from "@/content/site";
@@ -7,6 +6,7 @@ import type { Availability, ProjectLinkKind } from "@/content/types";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { DotGrid, OutlineSquare } from "@/components/ui/decor";
+import { ProjectGallery, ZoomableImage } from "@/components/ui/image-lightbox";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -54,7 +54,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (!project) notFound();
 
   const availability = project.availability ?? "public";
-  const note = availability === "public" ? null : availabilityNotes[availability];
+  const note =
+    project.availabilityNote ??
+    (availability === "public" ? null : availabilityNotes[availability]);
 
   return (
     <div className="container-page relative pt-8 pb-8">
@@ -95,15 +97,21 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         ) : null}
       </header>
 
-      {project.image ? (
-        <div className="border-line/60 relative mb-16 aspect-[16/9] w-full overflow-hidden border">
-          <Image
-            src={project.image}
-            alt={`${project.title} screenshot`}
-            fill
+      {project.gallery && project.gallery.length > 0 ? (
+        <section className="mb-16" aria-labelledby="screens-heading">
+          <SectionHeading title="screens" id="screens-heading" />
+          <ProjectGallery images={project.gallery} title={project.title} />
+        </section>
+      ) : project.image ? (
+        <div className="border-line/60 mb-16 border">
+          <ZoomableImage
+            thumbnail={project.image}
+            images={[]}
+            title={project.title}
+            label={`Expand the ${project.title} screenshot`}
+            className="aspect-[16/9]"
             sizes="(max-width: 1024px) 100vw, 1024px"
             priority
-            className="object-cover"
           />
         </div>
       ) : null}

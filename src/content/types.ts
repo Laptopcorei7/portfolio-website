@@ -69,6 +69,24 @@ export type ProjectLink = {
  */
 export type Availability = "public" | "private" | "unpublished";
 
+/**
+ * One screen in a project's gallery, stored at its own native resolution.
+ *
+ * `width` and `height` are the real pixel dimensions of the file. They earn
+ * their place twice: the gallery grid sizes each cell to its image's own aspect
+ * ratio, so a portrait phone screen is not letterboxed into a landscape box,
+ * and the viewer uses them to work out how far it can zoom before it runs out
+ * of real pixels and starts inventing them.
+ */
+export type ProjectImage = {
+  /** Path under /public, e.g. "/projects/agricycle-home.webp". */
+  src: string;
+  width: number;
+  height: number;
+  /** Shown under the thumbnail and in the viewer. One short line. */
+  caption: string;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -82,6 +100,12 @@ export type Project = {
   links: ProjectLink[];
   /** Defaults to "public" when omitted. */
   availability?: Availability;
+  /**
+   * Replaces the stock note for this project's `availability`. Use it when the
+   * generic wording would be misleading, e.g. client work, where the repository
+   * is private because it belongs to someone else rather than by choice.
+   */
+  availabilityNote?: string;
   /** Longer prose for the detail page, one string per paragraph. */
   overview?: string[];
   /** Notable capabilities, rendered as a list on the detail page. */
@@ -94,6 +118,13 @@ export type Project = {
    * the grid keeps its shape until real artwork is added.
    */
   image?: string;
+  /**
+   * Every screen worth showing, in the order they should be read. Rendered as
+   * a grid on the detail page; each one opens the full-screen viewer, which
+   * pages through the rest. `image` above stays separate because it is a
+   * purpose-built 16:10 crop for the card, not one of these.
+   */
+  gallery?: ProjectImage[];
   /** Featured projects appear in the home page `#projects` section. */
   featured?: boolean;
 };
