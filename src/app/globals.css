@@ -28,8 +28,16 @@
     color: var(--color-body);
     font-family: var(--font-mono);
     -webkit-font-smoothing: antialiased;
-    /* The decorative dot-grids and outline squares bleed past the viewport. */
+    /* The decorative dot-grids and outline squares bleed past the viewport, so
+       the horizontal overflow they create has to be cut off.
+
+       `clip` rather than `hidden`: `hidden` turns the body into a scroll
+       container, and a scrollable body is what makes mobile Safari jitter on
+       momentum scrolling and mis-place fixed and sticky children. `clip` cuts
+       the overflow without any of that. `hidden` stays as the fallback for
+       anything too old to know `clip`. */
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /* Every heading in the template is white; the colour accent comes from the
