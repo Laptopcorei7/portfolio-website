@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Project, ProjectLinkKind } from "@/content/types";
 import { ButtonLink } from "@/components/ui/button";
+import { ZoomableImage } from "@/components/ui/image-lightbox";
 
 /** Label + trailing glyph for each link kind, matching the mockups. */
 const linkLabels: Record<ProjectLinkKind, { text: string; glyph: string }> = {
@@ -27,6 +28,12 @@ const linkLabels: Record<ProjectLinkKind, { text: string; glyph: string }> = {
  * entirely and start at the tech row. Rendering a placeholder there instead
  * reads as a broken asset rather than a deliberate choice.
  *
+ * The thumbnail opens the full-screen viewer rather than navigating to the
+ * project. On a phone the card is about as wide as the detail page, so
+ * following the link would show the same screenshot at the same unreadable
+ * size; zooming is the thing a reader actually wants there. Navigation is
+ * still one tap away on the title and the Details button.
+ *
  * The card deliberately shows only `project.tech` — the main languages and
  * frameworks. The full stack lives on the detail page.
  */
@@ -43,17 +50,28 @@ export function ProjectCard({
   return (
     <article className="border-line/60 hover:border-accent/60 flex flex-col border transition-colors">
       {showImage && project.image ? (
-        <Link href={href} className="bg-bg relative aspect-[16/10] w-full overflow-hidden">
-          <Image
-            src={project.image}
-            /* Decorative: the title sits directly below as real text, so
-               describing the screenshot here would just repeat it. */
-            alt=""
-            fill
+        project.gallery && project.gallery.length > 0 ? (
+          <ZoomableImage
+            thumbnail={project.image}
+            images={project.gallery}
+            title={project.title}
+            label={`Expand the ${project.title} screens`}
+            className="aspect-[16/10]"
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover"
           />
-        </Link>
+        ) : (
+          /* No gallery to page through, so the thumbnail keeps its old job of
+             leading to the project. */
+          <Link href={href} className="bg-bg relative aspect-[16/10] w-full overflow-hidden">
+            <Image
+              src={project.image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover"
+            />
+          </Link>
+        )
       ) : null}
 
       <p className="border-line/60 border-b px-4 py-2 text-sm">
