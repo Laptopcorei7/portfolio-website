@@ -20,19 +20,42 @@ import type { NextConfig } from "next";
  * If a third-party script is ever added (analytics, embeds), extend script-src
  * with that exact origin rather than opening it up.
  */
+const isDev = process.env.NODE_ENV !== "production";
+
+/**
+ * React's development build calls eval() for debugging features such as
+ * rebuilding a callstack that crossed the server/client boundary, so `next dev`
+ * needs 'unsafe-eval' or the console fills with "eval() is not supported in
+ * this environment". The production build never calls eval(), so the shipped
+ * policy stays without it.
+ */
+const scriptSrc = isDev
+  ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+  : "script-src 'self' 'unsafe-inline'";
+
+/**
+ * `frame-ancestors 'none'` and `X-Frame-Options: DENY` block framing outright,
+ * including framing the site in itself. That is what we want in production, but
+ * locally it also blocks the easiest way to check a responsive layout: loading
+ * the page in a narrow same-origin iframe, where media queries resolve against
+ * the frame's width rather than the window's. Development allows 'self' only,
+ * so a page on any other origin still cannot frame the dev server.
+ */
+const frameAncestors = isDev ? "frame-ancestors 'self'" : "frame-ancestors 'none'";
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      scriptSrc,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self'",
       "connect-src 'self'",
       // Belt and braces alongside X-Frame-Options: blocks clickjacking in
       // browsers that honour CSP level 2+.
-      "frame-ancestors 'none'",
+      frameAncestors,
       "base-uri 'self'",
       "form-action 'self'",
       "object-src 'none'",
@@ -42,7 +65,9 @@ const securityHeaders = [
   // Stops the browser second-guessing declared MIME types, which is how a
   // served file can be coerced into executing as script.
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
+  // Older browsers that ignore frame-ancestors. SAMEORIGIN in development for
+  // the same responsive-testing reason described above.
+  { key: "X-Frame-Options", value: isDev ? "SAMEORIGIN" : "DENY" },
   // Full URL to ourselves, origin only cross-site, nothing over plain http.
   // Keeps deep links out of third-party referrer logs.
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
