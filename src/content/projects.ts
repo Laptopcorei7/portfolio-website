@@ -22,10 +22,10 @@ import type { Project } from "./types";
    `featuredProjects`, on the home page. Projects that have a screenshot lead,
    because cards stretch to equal height per row: a text-only card sharing a
    row with an image card inherits its height and gains ~230px of dead space.
-   With three image-bearing projects and a three-column grid, keeping them
-   together fills the first row exactly and the text-only cards line up evenly
-   underneath. Add a screenshot to a project and move it up into the first
-   group.
+   There are four image-bearing projects and the grid has three columns, so the
+   fourth (Intra Bus Mobile) shares row two with text-only cards. Add a
+   screenshot to a project and move it up into the first group; two more would
+   fill row two.
 
    IMAGES: 1600x1000 webp in /public/projects/, set as `image`. The detail-page
    hero re-crops the same file to 16:9 by keeping the middle 900px of height,
@@ -34,6 +34,46 @@ import type { Project } from "./types";
 
 export const completeApps: Project[] = [
   /* --- Screenshots, so these lead the grid ------------------------------- */
+  {
+    slug: "electrohub",
+    title: "ElectroHub",
+    description:
+      "Hybrid product recommender over 62,222 Amazon electronics, served by FastAPI behind a Next.js storefront.",
+    tech: ["Python", "FastAPI", "Next.js"],
+    links: [{ kind: "github", href: "https://github.com/Laptopcorei7/ecommerce_recommendation" }],
+    featured: true,
+    /* The home capture is already 1600x1000, so the card uses it directly. */
+    image: "/projects/electrohub-home.webp",
+    gallery: [
+      { src: "/projects/electrohub-home.webp", width: 1600, height: 1000, caption: "Home page: the catalogue and model size up front" },
+      { src: "/projects/electrohub-catalog.webp", width: 1600, height: 1000, caption: "All 62,222 products, filterable by category" },
+      { src: "/projects/electrohub-product.webp", width: 1600, height: 1000, caption: "A product page, with its nearest neighbours by content" },
+      { src: "/projects/electrohub-shopper.webp", width: 1600, height: 1000, caption: "Picking a real shopper and seeing what they rated" },
+      { src: "/projects/electrohub-picks.webp", width: 1600, height: 1000, caption: "Their top picks, each score split into its two halves" },
+      { src: "/projects/electrohub-score.webp", width: 1600, height: 1000, caption: "How a score is made, and the hit rate against baselines" },
+    ],
+    overview: [
+      "A product recommender trained on the Amazon Reviews 2023 Electronics dataset: 119,173 shoppers, 62,222 products and about 1.18 million ratings. A FastAPI service loads the trained model and ranks the whole catalogue for a shopper, and a Next.js storefront shows the results, down to the score behind each pick.",
+      "The model blends two signals. The collaborative half is implicit-feedback ALS, which learns from what similar shoppers rated. The content half compares product titles, brands and categories with TF-IDF. Both halves are standardized before they are combined, so the blend weight really moves the ranking.",
+      "This project was first written under deadline in 2025 and rebuilt in 2026. The rebuild found that the original blend could not reorder anything, that serving code read content similarity for the wrong products, and that the evaluated model was not the one being served. Each of those now has a test that fails if it comes back.",
+      "Results are reported against baselines. At a 0.0183 hit rate at 10, the hybrid beats a popularity baseline (0.0163) and ties pure collaborative filtering (0.0180) within noise, and the storefront says so.",
+    ],
+    highlights: [
+      "Implicit-feedback ALS for ranking, bias-corrected SVD for rating prediction",
+      "TF-IDF content similarity over product title, brand and category",
+      "One scoring function shared by the API and the evaluation",
+      "Leave-last-out evaluation against popularity and random baselines",
+      "96 tests, each tied to a defect the project actually had",
+      "Storefront page that explains each recommendation's score to a visitor",
+    ],
+    stack: [
+      { title: "Model", items: ["NumPy", "SciPy", "scikit-learn", "pandas"] },
+      { title: "Serving", items: ["Python 3.13", "FastAPI", "Uvicorn", "Pydantic"] },
+      { title: "Frontend", items: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS"] },
+      { title: "Data", items: ["Amazon Reviews 2023, Electronics", "Parquet"] },
+      { title: "Testing", items: ["pytest", "httpx"] },
+    ],
+  },
   {
     slug: "shop-api",
     title: "ShopAPI",
@@ -73,48 +113,6 @@ export const completeApps: Project[] = [
     ],
   },
   {
-    slug: "intra-bus-mobile",
-    title: "Intra Bus Mobile",
-    description:
-      "Conductor app for bus shift management and on-board ticketing, built to keep working when the signal drops.",
-    tech: ["Flutter", "Riverpod"],
-    links: [],
-    availability: "private",
-    featured: true,
-    /* Three phone screens composited into one 16:10 landscape frame — a single
-       portrait screenshot would crop to a thin band in the card. */
-    image: "/projects/intra-bus-mobile.webp",
-    /* Portrait phone screens. The grid sizes cells from these dimensions, so
-       they render tall rather than cropped into a landscape band. */
-    gallery: [
-      { src: "/projects/intra-bus-signin.webp", width: 572, height: 1222, caption: "Conductor sign-in, by employee ID" },
-      { src: "/projects/intra-bus-home.webp", width: 572, height: 1222, caption: "Shift dashboard with quick actions" },
-      { src: "/projects/intra-bus-start-shift.webp", width: 572, height: 1222, caption: "Starting a shift: pick the bus and route" },
-      { src: "/projects/intra-bus-active.webp", width: 572, height: 1222, caption: "An active shift, with live revenue and transaction counts" },
-      { src: "/projects/intra-bus-fare.webp", width: 572, height: 1222, caption: "Recording a fare against boarding and alighting stops" },
-      { src: "/projects/intra-bus-incident.webp", width: 572, height: 1222, caption: "Reporting a breakdown, accident or dispute" },
-      { src: "/projects/intra-bus-history.webp", width: 572, height: 1222, caption: "Past shifts, each showing its reconciled state" },
-    ],
-    overview: [
-      "The conductor-facing companion to Intra Bus Server. Conductors use it to manage their shift and issue tickets on board.",
-      "Buses lose signal constantly on intercity routes, so the app is built offline-first: tickets are written to a local Hive store and reconciled with the server once connectivity returns, rather than failing at the point of sale.",
-    ],
-    highlights: [
-      "Offline-first ticketing with local persistence",
-      "Connectivity-aware sync back to the server",
-      "Riverpod for state management",
-      "Declarative routing with go_router",
-      "Credentials in platform secure storage",
-    ],
-    stack: [
-      { title: "Framework", items: ["Flutter", "Dart"] },
-      { title: "State", items: ["flutter_riverpod"] },
-      { title: "Networking", items: ["dio", "connectivity_plus"] },
-      { title: "Storage", items: ["hive", "hive_flutter", "flutter_secure_storage"] },
-      { title: "Routing", items: ["go_router"] },
-    ],
-  },
-  {
     slug: "agricycle",
     title: "AgriCycle",
     description:
@@ -150,6 +148,50 @@ export const completeApps: Project[] = [
       { title: "Backend", items: ["Node.js", "Express"] },
       { title: "Database", items: ["SQLite"] },
       { title: "Tooling", items: ["Custom asset pipeline"] },
+    ],
+  },
+  /* Taken off the home page on 2026-09-16 to make room for ElectroHub. It now
+     starts /works row two, and the two text-only cards beside it stretch to its
+     height. That was an accepted trade-off. */
+  {
+    slug: "intra-bus-mobile",
+    title: "Intra Bus Mobile",
+    description:
+      "Conductor app for bus shift management and on-board ticketing, built to keep working when the signal drops.",
+    tech: ["Flutter", "Riverpod"],
+    links: [],
+    availability: "private",
+    /* Three phone screens composited into one 16:10 landscape frame — a single
+       portrait screenshot would crop to a thin band in the card. */
+    image: "/projects/intra-bus-mobile.webp",
+    /* Portrait phone screens. The grid sizes cells from these dimensions, so
+       they render tall rather than cropped into a landscape band. */
+    gallery: [
+      { src: "/projects/intra-bus-signin.webp", width: 572, height: 1222, caption: "Conductor sign-in, by employee ID" },
+      { src: "/projects/intra-bus-home.webp", width: 572, height: 1222, caption: "Shift dashboard with quick actions" },
+      { src: "/projects/intra-bus-start-shift.webp", width: 572, height: 1222, caption: "Starting a shift: pick the bus and route" },
+      { src: "/projects/intra-bus-active.webp", width: 572, height: 1222, caption: "An active shift, with live revenue and transaction counts" },
+      { src: "/projects/intra-bus-fare.webp", width: 572, height: 1222, caption: "Recording a fare against boarding and alighting stops" },
+      { src: "/projects/intra-bus-incident.webp", width: 572, height: 1222, caption: "Reporting a breakdown, accident or dispute" },
+      { src: "/projects/intra-bus-history.webp", width: 572, height: 1222, caption: "Past shifts, each showing its reconciled state" },
+    ],
+    overview: [
+      "The conductor-facing companion to Intra Bus Server. Conductors use it to manage their shift and issue tickets on board.",
+      "Buses lose signal constantly on intercity routes, so the app is built offline-first: tickets are written to a local Hive store and reconciled with the server once connectivity returns, rather than failing at the point of sale.",
+    ],
+    highlights: [
+      "Offline-first ticketing with local persistence",
+      "Connectivity-aware sync back to the server",
+      "Riverpod for state management",
+      "Declarative routing with go_router",
+      "Credentials in platform secure storage",
+    ],
+    stack: [
+      { title: "Framework", items: ["Flutter", "Dart"] },
+      { title: "State", items: ["flutter_riverpod"] },
+      { title: "Networking", items: ["dio", "connectivity_plus"] },
+      { title: "Storage", items: ["hive", "hive_flutter", "flutter_secure_storage"] },
+      { title: "Routing", items: ["go_router"] },
     ],
   },
 
@@ -286,9 +328,8 @@ export const smallProjects: Project[] = [
  * Featured projects shown in the home page `#projects` section.
  *
  * All three carry a screenshot, so the home grid is one clean row with no
- * ragged card heights. Because the image-bearing projects lead `completeApps`,
- * this is just the first three of that list; marking a fourth as `featured`
- * would not displace them.
+ * ragged card heights. This takes the first three `featured` entries in
+ * `completeApps` order: ElectroHub, ShopAPI and AgriCycle.
  *
  * The APIs are one click away on /works, which is where a visitor who wants the
  * backend work goes next.

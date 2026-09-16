@@ -59,6 +59,19 @@ const intraBus = [
   ["photo_2026-07-30_16-00-10.jpg", "intra-bus-incident", "Reporting a breakdown, accident or dispute"],
 ];
 
+/**
+ * Captured headless at a 1600x1000 viewport, so the home shot is already 16:10
+ * and doubles as the card image without a separate crop.
+ */
+const electroHub = [
+  ["electrohub-home.png", "electrohub-home", "Home page: the catalogue and model size up front"],
+  ["electrohub-catalog.png", "electrohub-catalog", "All 62,222 products, filterable by category"],
+  ["electrohub-product.png", "electrohub-product", "A product page, with its nearest neighbours by content"],
+  ["electrohub-shopper.png", "electrohub-shopper", "Picking a real shopper and seeing what they rated"],
+  ["electrohub-picks.png", "electrohub-picks", "Their top picks, each score split into its two halves"],
+  ["electrohub-score.png", "electrohub-score", "How a score is made, and the hit rate against baselines"],
+];
+
 const built = [];
 
 async function emit(pipeline, slug, caption) {
@@ -71,6 +84,11 @@ async function emit(pipeline, slug, caption) {
 
 async function main() {
   await mkdir(OUT, { recursive: true });
+
+  console.log("ElectroHub (native 1600x1000, untouched):");
+  for (const [file, slug, caption] of electroHub) {
+    await emit(sharp(path.join(RAW, file)), slug, caption);
+  }
 
   console.log("AgriCycle (native 1919px wide, untouched):");
   for (const [file, slug, caption] of agricycle) {
