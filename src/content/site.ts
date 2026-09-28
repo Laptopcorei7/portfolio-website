@@ -43,6 +43,20 @@ export const profile: Profile = {
   ],
 };
 
+/**
+ * What a link preview (WhatsApp, X, LinkedIn) shows. Written for business
+ * owners rather than recruiters, so it says what he builds in plain words.
+ * The on-page tagline and the browser tab title are unaffected.
+ *
+ * The preview image, src/app/opengraph-image.jpg, carries similar wording baked
+ * into the picture. Change both together.
+ */
+export const sharePreview = {
+  title: `${profile.shortName} | Websites and apps for businesses`,
+  description:
+    "I build websites and mobile apps for shops, hostels, eateries and schools in Kumasi. See what I've built.",
+};
+
 export const quote: Quote = {
   text: "But seek first the kingdom of God and his righteousness, and all these things will be added to you.",
   author: "Matthew 6:33",

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SocialRail } from "@/components/layout/social-rail";
-import { profile, siteUrl } from "@/content/site";
+import { profile, sharePreview, siteUrl } from "@/content/site";
 
 /** The template uses Fira Code for everything, body copy included. */
 const firaCode = Fira_Code({
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   description: profile.tagline,
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${profile.name} — ${profile.footerBio}`,
-    description: profile.tagline,
+    title: sharePreview.title,
+    description: sharePreview.description,
     url: "/",
     siteName: profile.name,
     type: "website",
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${profile.name} — ${profile.footerBio}`,
-    description: profile.tagline,
+    title: sharePreview.title,
+    description: sharePreview.description,
   },
 };
 
